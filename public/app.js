@@ -150,7 +150,11 @@ function renderLegend(element, series) { element.innerHTML = series.map((line) =
 function resetLiveData() { state.histories = {}; state.internal = {}; state.iperf = []; state.events = []; renderIperf(); drawAllCharts(); }
 function showNotice(text) { $('#notice').textContent = text; $('#notice').classList.remove('hidden'); }
 function hideNotice() { $('#notice').classList.add('hidden'); }
-function metric(value, suffix = '', digits = 1) { return Number.isFinite(Number(value)) ? `${Number(value).toFixed(digits)}${suffix}` : '--'; }
+function metric(value, suffix = '', digits = 1) {
+  if (value === null || value === undefined || value === '') return '--';
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? `${numeric.toFixed(digits)}${suffix}` : '--';
+}
 function formatTime(value) { return new Date(value).toLocaleTimeString('zh-TW', { hour12: false }); }
 function formatDate(value) { return new Date(value).toLocaleString('zh-TW', { hour12: false }); }
 function formatDuration(seconds) { const s = Math.max(0, Number(seconds) || 0); return [Math.floor(s / 3600), Math.floor(s % 3600 / 60), Math.floor(s % 60)].map((v) => String(v).padStart(2, '0')).join(':'); }

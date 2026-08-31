@@ -18,6 +18,14 @@
 - Node.js 22.5 或以上（專案不需要 `npm install`）
 - `iperf3` 並加入 PATH；沒有它時其他探測仍可用，但 PC 發起的吞吐測試會顯示失敗
 
+Windows 11 可使用 PowerShell 安裝 `iperf3`：
+
+```powershell
+winget install --id ar51an.iPerf3 --exact --accept-package-agreements --accept-source-agreements
+```
+
+安裝後請關閉並重新開啟 PowerShell，再執行 `iperf3 --version` 確認 PATH 已生效。
+
 ### Raspberry Pi
 
 - Raspberry Pi OS / Debian 類系統
