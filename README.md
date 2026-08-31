@@ -73,6 +73,20 @@ systemctl status network-system-iperf3
 curl http://127.0.0.1:8765/health
 ```
 
+如果 Agent 顯示 `status=1/FAILURE` 且安裝時間早於權限修正版，可直接修復：
+
+```bash
+sudo chown root:network-monitor /etc/network-system/agent-config.json
+sudo chmod 640 /etc/network-system/agent-config.json
+sudo systemctl restart network-system-agent
+```
+
+需要查看完整錯誤時執行：
+
+```bash
+sudo journalctl -u network-system-agent -n 30 --no-pager
+```
+
 如果 Pi 有啟用防火牆，只允許內網存取 TCP `8765`、TCP/UDP `5201`。Agent 沒有 TLS，不能把這些連接埠轉發到公網。
 
 ## 3. 啟動 Windows 控制器

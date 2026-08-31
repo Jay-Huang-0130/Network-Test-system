@@ -28,10 +28,12 @@ install -m 0644 "${PROJECT_DIR}/systemd/network-system-agent.service" /etc/syste
 install -m 0644 "${PROJECT_DIR}/systemd/network-system-iperf3.service" /etc/systemd/system/network-system-iperf3.service
 
 AGENT_TOKEN="${AGENT_TOKEN}" python3 -c 'import json, os; json.dump({"host":"0.0.0.0","port":8765,"token":os.environ["AGENT_TOKEN"]}, open("/etc/network-system/agent-config.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)'
-chmod 0600 /etc/network-system/agent-config.json
+chown root:network-monitor /etc/network-system/agent-config.json
+chmod 0640 /etc/network-system/agent-config.json
 
 systemctl daemon-reload
-systemctl enable --now network-system-agent.service network-system-iperf3.service
+systemctl enable network-system-agent.service network-system-iperf3.service
+systemctl restart network-system-agent.service network-system-iperf3.service
 
 echo "安裝完成。Agent: TCP 8765，iperf3: TCP/UDP 5201"
 echo "狀態檢查：systemctl status network-system-agent network-system-iperf3"
