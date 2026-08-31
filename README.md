@@ -5,7 +5,8 @@
 ## 可以量到什麼
 
 - 三台設備各自每秒執行公網 Ping、TCP 443、DNS、HTTPS 探測
-- PC ↔ Pi 1、PC ↔ Pi 2、Pi 1 ↔ Pi 2 每秒內網存活與延遲
+- PC → Pi 1、PC → Pi 2 每秒 ICMP 延遲；Agent 每秒 HTTP 回應驗證 Pi → PC 回程
+- Pi 1 ↔ Pi 2 彼此執行每秒內網存活與延遲
 - 三組鏈路輪流執行雙向 TCP `iperf3`
 - 定期執行雙向 UDP，取得 jitter 與 packet loss
 - 連續三次失敗才建立斷線事件，避免單次偶發逾時誤報
@@ -156,3 +157,5 @@ npm.cmd test
 - 吞吐降低且 TCP 重傳上升：可能是干擾、線材、交換器或 Wi-Fi 品質
 
 此工具提供網路層面的證據與初步歸因，不會單憑一個失敗訊號直接判定 ISP 斷線。
+
+Windows 不需要開放 ICMP Echo Request。控制器主動連到 Pi Agent，而 Agent 的 HTTP 回應本身就是雙向心跳；因此不會因 Windows 預設封鎖 Ping 而把 Pi → PC 誤判為斷線。

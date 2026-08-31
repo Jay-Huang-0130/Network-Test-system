@@ -54,15 +54,21 @@ class MonitorScheduler extends EventEmitter {
       if (this.probeBusy.has(node.id)) return;
       this.probeBusy.add(node.id);
       const targets = this.nodes.filter((target) => target.id !== node.id);
+      // The successful Agent HTTP response already proves the Pi -> controller
+      // return path. Do not require Raspberry Pi nodes to ICMP-ping Windows,
+      // because Windows commonly blocks inbound echo requests by default.
+      const probeTargets = node.kind === 'agent'
+        ? targets.filter((target) => target.kind !== 'local')
+        : targets;
       let sample;
       try {
         sample = node.kind === 'local'
-          ? await runLocalProbe(node, targets, this.config.probe)
-          : await probeAgent(node, targets, this.config.probe);
+          ? await runLocalProbe(node, probeTargets, this.config.probe)
+          : await probeAgent(node, probeTargets, this.config.probe);
         sample.nodeId = node.id; sample.nodeName = node.name; sample.agentReachable = true;
       } catch (error) {
         sample = failedSample(node, error.message);
-        sample.internal = targets.map((target) => ({
+        sample.internal = probeTargets.map((target) => ({
           targetId: target.id, targetName: target.name, targetAddress: target.address,
           success: false, latencyMs: null, error: '來源節點 Agent 無回應'
         }));
