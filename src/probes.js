@@ -6,8 +6,8 @@ const { performance } = require('node:perf_hooks');
 function runCommand(file, args, timeoutMs) {
   return new Promise((resolve) => {
     const started = performance.now();
-    execFile(file, args, { timeout: timeoutMs, windowsHide: true }, (error) => {
-      resolve({ success: !error, latencyMs: round(performance.now() - started), error: error?.code || null });
+    execFile(file, args, { timeout: timeoutMs, windowsHide: true }, (error, stdout) => {
+      resolve({ success: !error, elapsedMs: round(performance.now() - started), stdout: stdout || '', error: error?.code || null });
     });
   });
 }
@@ -16,7 +16,20 @@ async function ping(target, timeoutMs) {
   const args = process.platform === 'win32'
     ? ['-n', '1', '-w', String(timeoutMs), target]
     : ['-c', '1', '-W', String(Math.max(1, Math.ceil(timeoutMs / 1000))), target];
-  return runCommand('ping', args, timeoutMs + 300);
+  const result = await runCommand('ping', args, timeoutMs + 300);
+  return {
+    success: result.success,
+    latencyMs: result.success ? (parsePingLatency(result.stdout) ?? result.elapsedMs) : null,
+    error: result.error
+  };
+}
+
+function parsePingLatency(output) {
+  const match = String(output).match(/([=<])\s*(\d+(?:[.,]\d+)?)\s*ms/i);
+  if (!match) return null;
+  const value = Number(match[2].replace(',', '.'));
+  if (!Number.isFinite(value)) return null;
+  return match[1] === '<' ? value / 2 : value;
 }
 
 function tcpProbe(host, port, timeoutMs) {
@@ -106,4 +119,4 @@ function failedSample(node, message) {
 
 function round(value) { return Math.round(value * 10) / 10; }
 
-module.exports = { ping, tcpProbe, dnsProbe, httpProbe, runLocalProbe, failedSample };
+module.exports = { ping, parsePingLatency, tcpProbe, dnsProbe, httpProbe, runLocalProbe, failedSample };

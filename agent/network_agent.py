@@ -5,6 +5,7 @@ import argparse
 import concurrent.futures
 import hmac
 import json
+import re
 import socket
 import subprocess
 import time
@@ -27,14 +28,23 @@ def ping_once(target, timeout_ms):
     try:
         result = subprocess.run(
             ["ping", "-c", "1", "-W", str(max(1, (timeout_ms + 999) // 1000)), target],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            capture_output=True,
+            text=True,
             timeout=(timeout_ms / 1000) + 0.4,
             check=False,
         )
-        return {"success": result.returncode == 0, "latencyMs": elapsed_ms(started) if result.returncode == 0 else None}
+        latency = parse_ping_latency(result.stdout)
+        return {"success": result.returncode == 0, "latencyMs": latency if latency is not None else elapsed_ms(started) if result.returncode == 0 else None}
     except (subprocess.TimeoutExpired, OSError) as exc:
         return {"success": False, "latencyMs": None, "error": str(exc)}
+
+
+def parse_ping_latency(output):
+    match = re.search(r"([=<])\s*(\d+(?:[.,]\d+)?)\s*ms", output or "", re.IGNORECASE)
+    if not match:
+        return None
+    value = float(match.group(2).replace(",", "."))
+    return value / 2 if match.group(1) == "<" else value
 
 
 def tcp_probe(host, port, timeout_ms):
