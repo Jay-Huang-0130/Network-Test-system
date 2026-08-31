@@ -159,3 +159,13 @@ npm.cmd test
 此工具提供網路層面的證據與初步歸因，不會單憑一個失敗訊號直接判定 ISP 斷線。
 
 Windows 不需要開放 ICMP Echo Request。控制器主動連到 Pi Agent，而 Agent 的 HTTP 回應本身就是雙向心跳；因此不會因 Windows 預設封鎖 Ping 而把 Pi → PC 誤判為斷線。
+
+## 從 Raspberry Pi 移除
+
+執行以下一行即可停止服務並移除 Agent、設定檔、systemd 服務及 `network-monitor` 專用帳號：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Jay-Huang-0130/Network-Test-system/main/scripts/uninstall-pi.sh | sudo bash
+```
+
+移除程式預設保留 `iperf3`、Python、curl 與 ping，因為其他程式可能也會使用它們。如果確定 `iperf3` 不再需要，可另外執行 `sudo apt remove --purge iperf3`。
