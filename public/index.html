@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Network System</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">LAN / INTERNET OBSERVATORY</p>
+      <h1>網路品質監測</h1>
+    </div>
+    <div id="clock" class="clock">--:--:--</div>
+  </header>
+
+  <main>
+    <section class="control card">
+      <div>
+        <span id="session-dot" class="dot idle"></span>
+        <span id="session-status">尚未開始測試</span>
+        <strong id="remaining">01:00:00</strong>
+      </div>
+      <div class="actions">
+        <label>測試時間 <input id="duration" type="number" min="1" max="1440" value="60"> 分鐘</label>
+        <button id="start" class="primary">開始測試</button>
+        <button id="stop" class="danger" disabled>停止</button>
+      </div>
+    </section>
+
+    <div id="notice" class="notice hidden"></div>
+
+    <section>
+      <div class="section-title">
+        <div><span>LIVE NODES</span><h2>三台設備即時狀態</h2></div>
+        <small>公網狀態每秒更新</small>
+      </div>
+      <div id="nodes" class="node-grid"></div>
+    </section>
+
+    <section class="chart-grid">
+      <article class="card chart-card">
+        <div class="card-heading"><div><span>PUBLIC LATENCY</span><h2>公網延遲</h2></div><span class="unit">ms</span></div>
+        <canvas id="public-chart" height="230"></canvas>
+        <div id="public-legend" class="legend"></div>
+      </article>
+      <article class="card chart-card">
+        <div class="card-heading"><div><span>INTERNAL LATENCY</span><h2>內網延遲</h2></div><span class="unit">ms</span></div>
+        <canvas id="internal-chart" height="230"></canvas>
+        <div id="internal-legend" class="legend"></div>
+      </article>
+    </section>
+
+    <section class="card table-card">
+      <div class="card-heading">
+        <div><span>THROUGHPUT</span><h2>最近一次雙向測速</h2></div>
+        <small>TCP 每分鐘輪測一組；UDP 依設定週期執行</small>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>時間</th><th>路徑</th><th>協定</th><th>速度</th><th>重傳</th><th>Jitter</th><th>丟包</th><th>狀態</th></tr></thead><tbody id="iperf-body"><tr><td colspan="8" class="empty">等待測速結果</td></tr></tbody></table>
+      </div>
+    </section>
+
+    <section class="bottom-grid">
+      <article class="card">
+        <div class="card-heading"><div><span>EVENT LOG</span><h2>事件紀錄</h2></div></div>
+        <div id="events" class="events"><p class="empty">目前沒有異常事件</p></div>
+      </article>
+      <article class="card">
+        <div class="card-heading"><div><span>SESSIONS</span><h2>歷史測試</h2></div></div>
+        <div id="sessions" class="sessions"><p class="empty">尚無歷史測試</p></div>
+      </article>
+    </section>
+
+    <section id="summary-section" class="card summary-card hidden">
+      <div class="card-heading"><div><span>SESSION SUMMARY</span><h2>測試摘要</h2></div><a id="csv-link" class="download" href="#">下載 CSV</a></div>
+      <div id="summary" class="summary-grid"></div>
+    </section>
+  </main>
+
+  <footer>Network System · 所有時間使用本機時區顯示</footer>
+  <script src="/app.js" defer></script>
+</body>
+</html>

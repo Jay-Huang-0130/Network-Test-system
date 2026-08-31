@@ -1,0 +1,24 @@
+{
+  "controller": {
+    "host": "0.0.0.0",
+    "port": 8080,
+    "database": "data/network-monitor.db",
+    "localNode": { "id": "windows-pc", "name": "Windows PC", "address": "192.168.1.10" }
+  },
+  "agents": [
+    { "id": "pi-1", "name": "Raspberry Pi 1", "address": "192.168.1.21", "port": 8765, "token": "change-this-token" },
+    { "id": "pi-2", "name": "Raspberry Pi 2", "address": "192.168.1.22", "port": 8765, "token": "change-this-token" }
+  ],
+  "probe": {
+    "intervalMs": 1000,
+    "timeoutMs": 850,
+    "publicPingTargets": ["1.1.1.1", "8.8.8.8"],
+    "tcpTarget": { "host": "1.1.1.1", "port": 443 },
+    "dnsHostname": "example.com",
+    "httpUrl": "https://connectivitycheck.gstatic.com/generate_204",
+    "onlineMinimumSignals": 2,
+    "outageThreshold": 3
+  },
+  "iperf": { "enabled": true, "intervalSeconds": 60, "durationSeconds": 5, "port": 5201, "udpEveryCycles": 5, "udpBandwidth": "10M" },
+  "session": { "defaultDurationSeconds": 3600 }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "network-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Three-node LAN and Internet stability monitor",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node --no-warnings src/server.js",
+    "dev": "node --no-warnings --watch src/server.js",
+    "test": "node --no-warnings --test"
+  }
+}

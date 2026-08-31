@@ -1,0 +1,19 @@
+[Unit]
+Description=Network System iperf3 server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=network-monitor
+Group=network-monitor
+ExecStart=/usr/bin/iperf3 -s -p 5201
+Restart=always
+RestartSec=2
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

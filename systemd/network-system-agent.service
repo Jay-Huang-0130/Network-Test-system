@@ -1,0 +1,19 @@
+[Unit]
+Description=Network System probe agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=network-monitor
+Group=network-monitor
+ExecStart=/usr/bin/python3 /opt/network-system/network_agent.py --config /etc/network-system/agent-config.json
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
